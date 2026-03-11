@@ -9,16 +9,17 @@ import time
 
 reader = easyocr.Reader(['pt'])
 
-def extrair_dados_pt(texto_lista, nome_empresa, morada):
+def extrair_dados_pt(texto_lista, nome_empresa, morada,servico):
     """Filtra dados seguindo padrões de Portugal (Fixo e Móvel)"""
     dados = {
         "Empresa/Nome": nome_empresa,
         "morada": morada,
+        "Código-Postal": "",
+        "NIF/NIPC": "",
+        "servico a oferecer": servico,
         "telefone_fixo": "",                  
         "Telemóvel/Telefone": "",
         "Email": "",
-        "Código-Postal": "",
-        "NIF/NIPC": "",
         "Site": ""
     }
 
@@ -104,6 +105,7 @@ while True:
         cv2.imwrite(filename, frame)
         print(f"Imagem capturada: {filename}")
         nome_empresa = input("Digite o nome da empresa: ")  # Solicita o nome da empresa para associar ao cartão
+        servico = input("Digite o serviço a oferecer: ")  # Solicita o serviço a oferecer para associar ao cartão
         morada = input("Digite a morada da empresa: ")  # Solicita a morada da empresa para associar ao cartão
 
         # OCR diretamente do frame (não precisa salvar arquivo)
@@ -113,7 +115,7 @@ while True:
             continue
 
         # Extrai dados e salva no Excel
-        info = extrair_dados_pt(result, nome_empresa,morada)
+        info = extrair_dados_pt(result, nome_empresa,morada,servico)  # Você pode personalizar o serviço a oferecer
         df = pd.DataFrame([info])
 
         try:
