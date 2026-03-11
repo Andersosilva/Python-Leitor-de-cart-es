@@ -9,17 +9,17 @@ import os
 # O modelo será carregado na primeira execução
 reader = easyocr.Reader(['pt'])
 
-def extrair_dados_pt(texto_lista, nome_empresa, morada_manual):
+def extrair_dados_pt(texto_lista, nome_empresa, morada_manual,servico):
     """Filtra dados seguindo padrões de Portugal (Fixo, Móvel e Morada)"""
     dados = {
         "Empresa/Nome": nome_empresa,
         "morada": morada_manual,
+        "Código-Postal": "",
+        "NIF/NIPC": "",
+        "servico a oferecer": servico,
         "telefone_fixo": "",                  
         "Telemóvel/Telefone": "",
         "Email": "",
-        "Site": "",
-        "Código-Postal": "",
-        "NIF/NIPC": "",
         "Site": ""
 
     }
@@ -114,6 +114,7 @@ while True:
     if key == ord('s'):
         print("\n--- Processando Cartão ---")
         nome_empresa = input("Digite o nome da empresa (ou deixe vazio): ")
+        servico = input("Digite o serviço a oferecer: ")
         morada_manual = input("Digite a morada (ou deixe vazio para detecção automática): ")
 
         # PRÉ-PROCESSAMENTO PARA LETRAS PEQUENAS 
@@ -130,7 +131,7 @@ while True:
             continue
 
         # Extrai os dados
-        info = extrair_dados_pt(result, nome_empresa, morada_manual)
+        info = extrair_dados_pt(result, nome_empresa, morada_manual,servico)  # Passa o serviço a oferecer para o dicionário
         
         # Mostra o que foi capturado no terminal para conferir
         print(f"Dados Capturados: {info}")
