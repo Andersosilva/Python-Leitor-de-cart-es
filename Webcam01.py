@@ -2,7 +2,6 @@ import cv2
 import easyocr
 import pandas as pd
 import re
-import time
 import os
 
 # 1. Configura EasyOCR para Português
@@ -42,9 +41,9 @@ def extrair_dados_pt(texto_lista, nome_empresa, morada_manual,servico):
         item_lower = item_clean.lower()
 
         # --- 1. Email ---
-        if re.search(re_email, item_clean):
-            dados["Email"] = item_clean.lower()
-            continue # Se é email, ignoramos para morada
+        email_match = re.search(re_email, item_clean)
+        if email_match:
+            dados["Email"] = email_match.group(0).lower()
 
         # --- 2. Telefones (Fixo e Móvel) ---
         fixo_match = re.search(re_fixo, item_clean)
@@ -54,6 +53,10 @@ def extrair_dados_pt(texto_lista, nome_empresa, morada_manual,servico):
         movel_match = re.search(re_movel, item_clean)
         if movel_match:
             dados["Telemóvel/Telefone"] = movel_match.group(0)
+        else:
+            fixo_match = re.search(re_fixo, item_clean)
+            if fixo_match:
+                dados["telefone_fixo"] = fixo_match.group(0)
 
         # --- 3. Código Postal e Morada na mesma linha ---
         cp_match = re.search(re_cp, item_clean)
@@ -90,6 +93,7 @@ def extrair_dados_pt(texto_lista, nome_empresa, morada_manual,servico):
     if not dados["morada"] and linhas_morada_detectadas:
         # Junta as linhas (Rua + CP/Localidade)
         dados["morada"] = " - ".join(linhas_morada_detectadas)
+
 
     return dados
 
